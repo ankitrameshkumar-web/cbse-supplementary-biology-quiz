@@ -1,2 +1,2 @@
 # cbse-supplementary-biology-quiz
-This Quiz id specifically made for supplementary PDF provided by CBSE.
+This Quiz is specifically made for the supplementary PDF provided by CBSE.
