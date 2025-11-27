@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBSE Biology 5-Q Topic Quiz - NEET 2026</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background: linear-gradient(45deg, #ff6b6b, #4ecdc4); color: white; padding: 30px; text-align: center; }
+        .header h1 { font-size: 2.2em; margin-bottom: 10px; }
+        .topic-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; padding: 30px; }
+        .topic-btn { padding: 20px; background: linear-gradient(45deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 15px; font-size: 1.2em; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+        .topic-btn:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(78,205,196,0.3); }
+        .quiz-panel { padding: 30px; display: none; }
+        .question { background: #f8f9fa; border-radius: 15px; padding: 25px; margin-bottom: 20px; border-left: 5px solid #4ecdc4; }
+        .question h3 { color: #2c3e50; margin-bottom: 20px; font-size: 1.3em; }
+        .options label { display: block; padding: 15px; background: white; border-radius: 10px; cursor: pointer; margin: 10px 0; border: 2px solid #e9ecef; transition: all 0.3s; }
+        .options label:hover { background: #e3f2fd; border-color: #4ecdc4; }
+        .options input[type="radio"] { margin-right: 15px; transform: scale(1.3); }
+        .submit-btn { width: 100%; padding: 20px; background: linear-gradient(45deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 15px; font-size: 1.5em; cursor: pointer; margin-top: 20px; }
+        .results { display: none; padding: 30px; background: linear-gradient(135deg, #a8e6cf, #ffd3a5); border-radius: 15px; margin-top: 20px; }
+        .score { font-size: 3em; font-weight: bold; text-align: center; margin-bottom: 20px; }
+        .back-btn { width: 100%; padding: 15px; background: #3498db; color: white; border: none; border-radius: 10px; font-size: 1.1em; cursor: pointer; margin-top: 20px; }
+        .result-item { padding: 15px; background: white; border-radius: 10px; margin: 10px 0; border-left: 5px solid; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧬 CBSE Biology Topic Quiz</h1>
+            <p>5 Questions Per Topic | NEET 2026 Level | Supplementary Material</p>
+        </div>
+        
+        <div class="topic-grid" id="topicGrid">
+            <button class="topic-btn" onclick="startTopicQuiz('thalassemia')">🩸 Thalassemia</button>
+            <button class="topic-btn" onclick="startTopicQuiz('stem_cells')">🦠 Stem Cells</button>
+            <button class="topic-btn" onclick="startTopicQuiz('dengue')">🦟 Dengue/Chikungunya</button>
+            <button class="topic-btn" onclick="startTopicQuiz('polygenic')">📊 Polygenic Inheritance</button>
+            <button class="topic-btn" onclick="startTopicQuiz('antibiotics')">💊 Antibiotics</button>
+            <button class="topic-btn" onclick="startTopicQuiz('ramsar')">🌿 Ramsar Sites</button>
+            <button class="topic-btn" onclick="startTopicQuiz('reproduction')">🔬 Asexual Reproduction</button>
+        </div>
+
+        <div id="quizPanel" class="quiz-panel">
+            <h2 id="currentTopic"></h2>
+            <div id="questionsContainer"></div>
+            <button class="submit-btn" onclick="submitQuiz()" id="submitBtn" style="display: none;">✅ SUBMIT QUIZ</button>
+        </div>
+
+        <div id="resultsPanel" class="results">
+            <div id="scoreDisplay" class="score"></div>
+            <div id="resultsDetails"></div>
+            <button class="back-btn" onclick="backToTopics()">🏠 Back to Topics</button>
+        </div>
+    </div>
+
+    <script>
+        // STRICTLY FROM SUPPLEMENTARY MATERIAL - 5 QUESTIONS PER TOPIC
+        const questionsDB = {
+            thalassemia: [
+                {q: "Delta Thalassemia primarily affects which hemoglobin component that constitutes ~3% of adult hemoglobin?", 
+                 options: ["Alpha chains", "Beta chains", "Delta chains", "Gamma chains"], 
+                 correct: 2, exp: "Delta chains form HbA2 (α2δ2) - 3% of adult hemoglobin [attached_file:1]"},
+                {q: "Alpha Thalassemia results in excess formation of which unstable hemoglobin tetramer?", 
+                 options: ["HbA", "HbS", "HbH (β4)", "HbF"], 
+                 correct: 2, exp: "Excess β chains form HbH with abnormal oxygen dissociation [attached_file:1]"},
+                {q: "Beta Thalassemia major is characterized by:", 
+                 options: ["Partial β chain synthesis", "Complete absence of β chains", "Excess α chains only", "Normal hemoglobin"], 
+                 correct: 1, exp: "β° Thalassemia = no β-globin synthesis [attached_file:1]"},
+                {q: "Thalassemia shows what inheritance pattern?", 
+                 options: ["X-linked dominant", "Autosomal recessive", "Mitochondrial", "Y-linked"], 
+                 correct: 1, exp: "Mendelian autosomal recessive inheritance [attached_file:1]"},
+                {q: "In Thalassemia, free globin chains cause damage by:", 
+                 options: ["RBC aggregation", "Precipitation and cell lysis", "WBC destruction", "Platelet activation"], 
+                 correct: 1, exp: "Insoluble globins precipitate inside RBCs causing lysis [attached_file:1]"}
+            ],
+            stem_cells: [
+                {q: "Which stem cell type can form BOTH embryo AND extraembryonic tissues?", 
+                 options: ["Pluripotent", "Multipotent", "Totipotent", "Unipotent"], 
+                 correct: 2, exp: "Totipotent = fertilized egg, forms complete organism [attached_file:1]"},
+                {q: "Pluripotent stem cells are derived from:", 
+                 options: ["Adult bone marrow", "Inner cell mass of blastocyst", "Blood", "Germ cells"], 
+                 correct: 1, exp: "Blastocyst inner cell mass [attached_file:1]"},
+                {q: "Multipotent stem cells example for blood disorders?", 
+                 options: ["Embryonic stem cells", "Hematopoietic stem cells", "Neural stem cells", "Skin stem cells"], 
+                 correct: 1, exp: "Blood lineage specific multipotent cells [attached_file:1]"},
+                {q: "Stem cell therapy injected into heart arteries comes from:", 
+                 options: ["Embryonic stem cells", "Adult bone marrow", "Neural stem cells", "Liver stem cells"], 
+                 correct: 1, exp: "Adult bone marrow stem cells improve cardiac function [attached_file:1]"},
+                {q: "Embryonic stem cells are extracted from embryos aged:", 
+                 options: ["1-2 months", "5-6 months", "Newborn", "Adult"], 
+                 correct: 1, exp: "5-6 month old embryos [attached_file:1]"}
+            ],
+            dengue: [
+                {q: "Dengue virus belongs to which family?", 
+                 options: ["Alphavirus", "Flaviviridae", "Coronaviridae", "Paramyxovirus"], 
+                 correct: 1, exp: "Flavivirus, single positive-stranded RNA [attached_file:1]"},
+                {q: "Primary vector for BOTH Dengue and Chikungunya?", 
+                 options: ["Anopheles", "Culex", "Aedes aegypti", "Aedes albopictus"], 
+                 correct: 2, exp: "Aedes aegypti transmits both flavivirus & alphavirus [attached_file:1]"},
+                {q: "Chikungunya virus classification?", 
+                 options: ["Flavivirus", "Alphavirus", "Arenavirus", "Bunyavirus"], 
+                 correct: 1, exp: "Alphavirus genus RNA virus [attached_file:1]"},
+                {q: "Dengue hemorrhagic fever key feature?", 
+                 options: ["Hypertension", "Plasma leakage", "Bradycardia", "Hyperthermia"], 
+                 correct: 1, exp: "Vascular plasma leakage syndrome [attached_file:1]"},
+                {q: "Primary Dengue prevention method?", 
+                 options: ["Vaccine only", "Eliminate mosquito breeding sites", "Bed nets", "Repellents"], 
+                 correct: 1, exp: "Remove Aedes aegypti habitats [attached_file:1]"}
+            ],
+            polygenic: [
+                {q: "3-gene polygenic inheritance produces how many phenotypic classes in F2?", 
+                 options: ["3 classes", "4 classes", "7 classes", "9 classes"], 
+                 correct: 2, exp: "1:6:15:20:15:6:1 ratio, 7 classes [attached_file:1]"},
+                {q: "Polygenic inheritance studied by Galton in humans?", 
+                 options: ["Skin color", "Height", "Eye color", "Blood group"], 
+                 correct: 1, exp: "Human height shows continuous variation [attached_file:1]"},
+                {q: "Polygenic traits show what type of curve?", 
+                 options: ["Step curve", "Bell-shaped curve", "J-shaped curve", "S-shaped curve"], 
+                 correct: 1, exp: "Classic bell curve due to additive effects [attached_file:1]"},
+                {q: "Polygenic inheritance involves:", 
+                 options: ["Single gene", "Two genes", "Multiple genes with cumulative effect", "Environment only"], 
+                 correct: 2, exp: "3+ genes, additive phenotypic effect [attached_file:1]"},
+                {q: "Wheat kernel color is classic example of:", 
+                 options: ["Monogenic", "Digenic", "Polygenic inheritance", "Epistasis"], 
+                 correct: 2, exp: "Multiple genes control kernel color [attached_file:1]"}
+            ],
+            antibiotics: [
+                {q: "First antibiotic discovered by Alexander Fleming?", 
+                 options: ["Streptomycin", "Penicillin", "Tetracycline", "Chloramphenicol"], 
+                 correct: 1, exp: "Penicillin discovered 1928 [attached_file:1]"},
+                {q: "β-Lactam antibiotics target bacterial:", 
+                 options: ["Protein synthesis", "DNA replication", "Cell wall synthesis", "Ribosomes"], 
+                 correct: 2, exp: "Peptidoglycan cell wall inhibition [attached_file:1]"},
+                {q: "Judicious antibiotic use prevents:", 
+                 options: ["Allergic reactions", "Bacterial resistance", "Side effects", "High cost"], 
+                 correct: 1, exp: "Prevents resistance development [attached_file:1]"},
+                {q: "Aminoglycosides example?", 
+                 options: ["Penicillin", "Gentamycin", "Ciprofloxacin", "Sulfonamide"], 
+                 correct: 1, exp: "Gentamycin - protein synthesis inhibitor [attached_file:1]"},
+                {q: "Antibiotics are ineffective against:", 
+                 options: ["Bacteria", "Fungi", "Viruses", "Protozoa"], 
+                 correct: 2, exp: "Require antiviral drugs [attached_file:1]"}
+            ],
+            ramsar: [
+                {q: "Ramsar Convention signed in which year?", 
+                 options: ["1969", "1971", "1975", "1980"], 
+                 correct: 1, exp: "1971, Ramsar, Iran [attached_file:1]"},
+                {q: "Ramsar Convention conserves:", 
+                 options: ["Forests", "Wetlands", "Deserts", "Mountains"], 
+                 correct: 1, exp: "Marshes, lakes, mangroves, coral reefs [attached_file:1]"},
+                {q: "One of Ramsar Convention's 3 pillars?", 
+                 options: ["Deforestation", "Wise use of wetlands", "Mining", "Agriculture"], 
+                 correct: 1, exp: "Wise use and conservation [attached_file:1]"},
+                {q: "First country to sign Ramsar Convention?", 
+                 options: ["India", "Australia", "USA", "UK"], 
+                 correct: 1, exp: "Australia among first signatories [attached_file:1]"},
+                {q: "Ramsar sites include which Indian wetland?", 
+                 options: ["Silent Valley", "Sundarbans", "Kaziranga", "Periyar"], 
+                 correct: 1, exp: "Multiple Indian Ramsar wetland sites [attached_file:1]"}
+            ],
+            reproduction: [
+                {q: "Sporulation protective structure around fission products?", 
+                 options: ["Cell membrane", "Resistant cyst wall", "Spore coat", "Exoskeleton"], 
+                 correct: 1, exp: "Cyst wall protects during desiccation [attached_file:1]"},
+                {q: "Fragmentation occurs in which organism?", 
+                 options: ["Amoeba", "Spirogyra", "Yeast", "Plasmodium"], 
+                 correct: 1, exp: "Algae like Spirogyra [attached_file:1]"},
+                {q: "Regeneration is BEST observed in:", 
+                 options: ["Humans", "Hydra", "Earthworm", "Frog"], 
+                 correct: 1, exp: "Hydra, planaria, echinoderms [attached_file:1]"},
+                {q: "Honey bee males develop from:", 
+                 options: ["Fertilized eggs", "Unfertilized eggs", "Parthenogenesis", "Budding"], 
+                 correct: 1, exp: "Haploid unfertilized eggs [attached_file:1]"},
+                {q: "Sporulation helps survival during:", 
+                 options: ["Favorable conditions", "Unfavorable conditions", "Reproduction phase", "Growth phase"], 
+                 correct: 1, exp: "Desiccation, extreme temperatures [attached_file:1]"}
+            ]
+        };
+
+        let currentQuiz = [];
+        let currentTopicName = '';
+
+        function startTopicQuiz(topic) {
+            currentTopicName = topic;
+            currentQuiz = questionsDB[topic];
+            displayQuiz();
+            document.getElementById('topicGrid').style.display = 'none';
+            document.getElementById('quizPanel').style.display = 'block';
+        }
+
+        function displayQuiz() {
+            document.getElementById('currentTopic').textContent = `🧪 ${getTopicName(currentTopicName)} - 5 Questions`;
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+
+            currentQuiz.forEach((q, index) => {
+                const div = document.createElement('div');
+                div.className = 'question';
+                div.innerHTML = `
+                    <h3>Q${index+1}: ${q.q}</h3>
+                    <div class="options">
+                        ${q.options.map((option, i) => 
+                            `<label><input type="radio" name="q${index}" value="${i}"> ${option}</label>`
+                        ).join('')}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+            document.getElementById('submitBtn').style.display = 'block';
+        }
+
+        function submitQuiz() {
+            let score = 0;
+            currentQuiz.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                if (selected && parseInt(selected.value) === q.correct) score++;
+            });
+
+            showResults(score);
+        }
+
+        function showResults(score) {
+            document.getElementById('quizPanel').style.display = 'none';
+            document.getElementById('resultsPanel').style.display = 'block';
+            
+            const total = currentQuiz.length;
+            const percent = (score / total * 100).toFixed(0);
+            const scoreEl = document.getElementById('scoreDisplay');
+            
+            let color = percent >= 80 ? '#27ae60' : percent >= 60 ? '#f39c12' : '#e74c3c';
+            let text = percent >= 80 ? '🎉 Excellent!' : percent >= 60 ? '👍 Good!' : '📚 Keep Practicing!';
+            
+            scoreEl.innerHTML = `<span style="color: ${color}">${score}/${total}</span><br><small>${percent}% | ${text}</small>`;
+
+            const details = document.getElementById('resultsDetails');
+            details.innerHTML = currentQuiz.map((q, i) => {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                const userAns = selected ? parseInt(selected.value) : -1;
+                const correct = q.correct;
+                const isRight = userAns === correct;
+                return `
+                    <div class="result-item" style="border-left-color: ${isRight ? '#27ae60' : '#e74c3c'};">
+                        <strong>Q${i+1}:</strong> ${isRight ? '✅ Correct' : '❌ Wrong'}<br>
+                        <small>${q.q.substring(0, 60)}...</small><br>
+                        <strong>Explanation:</strong> ${q.exp}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function backToTopics() {
+            document.getElementById('resultsPanel').style.display = 'none';
+            document.getElementById('topicGrid').style.display = 'grid';
+        }
+
+        function getTopicName(topic) {
+            const names = {
+                thalassemia: 'Thalassemia',
+                stem_cells: 'Stem Cell Technology', 
+                dengue: 'Dengue & Chikungunya',
+                polygenic: 'Polygenic Inheritance',
+                antibiotics: 'Antibiotics',
+                ramsar: 'Ramsar Sites',
+                reproduction: 'Asexual Reproduction'
+            };
+            return names[topic] || topic;
+        }
+    </script>
+</body>
+</html>
